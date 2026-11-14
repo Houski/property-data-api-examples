@@ -56,6 +56,7 @@ struct ValuedHome {
     property_id: String,
     estimate_sale_price: Option<f64>,
     assessment_value: Option<f64>,
+    assessment_value_source: Option<String>,
     property_taxes: Option<f64>,
 }
 
@@ -110,22 +111,31 @@ fn main() {
     };
 
     // Step 1: find the home and read its values. Money is in the currency of the
-    // property's country and is never converted.
+    // property's country and is never converted. assessment_value_source says where
+    // the assessed value came from, often a link to the roll.
+    // exclude=inferred leaves out an assessed value or property taxes Houski worked out. estimate_sale_price
+    // has no source field, so it is untouched. Remove exclude to get the inferred values back.
     let found: SearchAnswer = houski(
         "search",
-        &[("query", address.as_str()), ("max_results", "1"), ("select", "estimate_sale_price,assessment_value,property_taxes")],
+        &[
+            ("query", address.as_str()),
+            ("max_results", "1"),
+            ("select", "estimate_sale_price,assessment_value,assessment_value_source,property_taxes"),
+            ("exclude", "inferred"),
+        ],
     );
 
     let home = match found.data.first() {
         Some(home) => home,
         None => {
-            eprintln!("No property matched that address.");
+            eprintln!("No property matched that address, or Houski inferred both its assessed value and its property taxes.");
             std::process::exit(1);
         }
     };
     println!("Address: {}", home.address);
     println!("estimate_sale_price: {}", shown(&home.estimate_sale_price, "(not known)"));
     println!("assessment_value: {}", shown(&home.assessment_value, "(not known)"));
+    println!("assessment_value_source: {}", shown(&home.assessment_value_source, "(not known)"));
     println!("property_taxes: {}", shown(&home.property_taxes, "(not known)"));
 
     // Step 2: the modelled sale value of that home for each of the last 24 months.

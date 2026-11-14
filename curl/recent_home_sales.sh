@@ -21,6 +21,8 @@ since=$(date -d "90 days ago" +%F)
 
 # These two filters choose which listing rows count.
 # all keeps only the properties that have a matching row.
+# exclude=inferred leaves out the property types and floor areas Houski worked out, and a home with
+# neither one stated. Remove exclude to get the inferred values back.
 curl --silent --show-error --fail-with-body --get "$API_URL/properties" \
   --data-urlencode "api_key=$HOUSKI_API_KEY" \
   --data-urlencode "country_abbreviation=$country" \
@@ -31,6 +33,7 @@ curl --silent --show-error --fail-with-body --get "$API_URL/properties" \
   --data-urlencode "expand_listing_date_gte=$since" \
   --data-urlencode "filter_expand_match=all" \
   --data-urlencode "select=property_type,interior_sq_m" \
+  --data-urlencode "exclude=inferred" \
   --data-urlencode "results_per_page=10"
 
 # The answer can be piped through jq to read it, for example | jq .data

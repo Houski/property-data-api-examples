@@ -15,11 +15,14 @@ address="${*:-100 main calgary}"
 
 # /search matches a typed address, typos included, and returns the best matches first.
 # select names the fields to return. Only the values that come back are billed.
+# exclude=inferred leaves out the facts Houski worked out. estimate_sale_price has no source field,
+# so it is untouched. Remove exclude to get the inferred facts back.
 curl --silent --show-error --fail-with-body --get "$API_URL/search" \
   --data-urlencode "api_key=$HOUSKI_API_KEY" \
   --data-urlencode "query=$address" \
   --data-urlencode "max_results=1" \
-  --data-urlencode "select=property_type,bedroom,bathroom_full,interior_sq_m,construction_year,estimate_sale_price"
+  --data-urlencode "select=property_type,bedroom,bathroom_full,interior_sq_m,construction_year,estimate_sale_price" \
+  --data-urlencode "exclude=inferred"
 
 # A field with no value for this home is left out of the row, so print what came back.
 

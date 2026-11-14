@@ -115,6 +115,8 @@ fn main() {
         false => arguments.join(" "),
     };
 
+    // exclude=inferred is left off here: /predict values the home by its bedroom count whether stated or
+    // worked out, so the example needs a count for every home.
     let found: SearchAnswer = houski("search", &[("query", address.as_str()), ("max_results", "1"), ("select", "bedroom")]);
     let home = match found.data.first() {
         Some(home) => home,

@@ -89,12 +89,17 @@ fn main() {
     };
     let select = QUOTE_FORM_FIELDS.join(",");
 
-    let answer: SearchAnswer = houski("search", &[("query", address.as_str()), ("max_results", "1"), ("select", select.as_str())]);
+    // exclude=inferred leaves out the facts Houski worked out, so a box is pre-filled only with a fact stated
+    // for this home. The scores have no source field and are untouched. Remove exclude to pre-fill inferred facts too.
+    let answer: SearchAnswer = houski(
+        "search",
+        &[("query", address.as_str()), ("max_results", "1"), ("select", select.as_str()), ("exclude", "inferred")],
+    );
 
     let home = match answer.data.first() {
         Some(home) => home,
         None => {
-            eprintln!("No property matched that address.");
+            eprintln!("No property matched that address, or Houski inferred every fact selected for it.");
             std::process::exit(1);
         }
     };

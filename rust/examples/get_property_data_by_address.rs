@@ -84,13 +84,16 @@ fn main() {
             ("query", address.as_str()),
             ("max_results", "1"),
             ("select", "property_type,bedroom,bathroom_full,interior_sq_m,construction_year,estimate_sale_price"),
+            // exclude=inferred leaves out the facts Houski worked out. estimate_sale_price has no source field,
+            // so it is untouched. Remove exclude to get the inferred facts back.
+            ("exclude", "inferred"),
         ],
     );
 
     let home = match answer.data.first() {
         Some(home) => home,
         None => {
-            eprintln!("No property matched that address.");
+            eprintln!("No property matched that address, or Houski inferred every fact selected for it.");
             std::process::exit(1);
         }
     };

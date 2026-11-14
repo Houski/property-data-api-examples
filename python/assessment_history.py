@@ -73,6 +73,7 @@ class AssessedHome(TypedDict, total=False):
     address: str
     property_id: str
     assessment_value: float
+    assessment_value_source: str
     property_taxes: float
     assessments: list[Assessment]
 
@@ -95,11 +96,18 @@ answer: PropertiesAnswer = houski(
     "properties",
     property_id_eq=found["data"][0]["property_id"],
     expand="assessments",
-    select="assessment_value,property_taxes",
+    # assessment_value_source says where the assessed value came from, often a link to the roll.
+    select="assessment_value,assessment_value_source,property_taxes",
+    # exclude=inferred leaves out an assessed value or property taxes Houski worked out.
+    # Remove exclude to get the inferred values back.
+    exclude="inferred",
 )
 
+if not answer["data"]:
+    sys.exit("Houski inferred both the assessed value and the property taxes of that home. Remove exclude to see them.")
+
 home: AssessedHome = answer["data"][0]
-print(f"{home['address']}: assessed at {home.get('assessment_value', '(not known)')}, property taxes {home.get('property_taxes', '(not known)')}")
+print(f"{home['address']}: assessed at {home.get('assessment_value', '(not known)')} (source {home.get('assessment_value_source', 'none')}), property taxes {home.get('property_taxes', '(not known)')}")
 for assessment in sorted(home.get("assessments", []), key=lambda assessment: assessment["expand_assessment_year"]):
     print(f"  {assessment['expand_assessment_year']}: {assessment['expand_assessment_value']}")
 

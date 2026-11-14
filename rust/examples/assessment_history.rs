@@ -91,6 +91,7 @@ struct AssessedHome {
     address: String,
     property_id: String,
     assessment_value: Option<f64>,
+    assessment_value_source: Option<String>,
     property_taxes: Option<f64>,
     #[serde(default)]
     assessments: Vec<Assessment>,
@@ -130,14 +131,29 @@ fn main() {
     // property_id_eq reads one property. expand attaches its assessment rows, one per year.
     let answer: PropertiesAnswer = houski(
         "properties",
-        &[("property_id_eq", found_home.property_id.as_str()), ("expand", "assessments"), ("select", "assessment_value,property_taxes")],
+        &[
+            ("property_id_eq", found_home.property_id.as_str()),
+            ("expand", "assessments"),
+            // assessment_value_source says where the assessed value came from, often a link to the roll.
+            ("select", "assessment_value,assessment_value_source,property_taxes"),
+            // exclude=inferred leaves out an assessed value or property taxes Houski worked out.
+            // Remove exclude to get the inferred values back.
+            ("exclude", "inferred"),
+        ],
     );
 
-    let home = &answer.data[0];
+    let home = match answer.data.first() {
+        Some(home) => home,
+        None => {
+            eprintln!("Houski inferred both the assessed value and the property taxes of that home. Remove exclude to see them.");
+            std::process::exit(1);
+        }
+    };
     println!(
-        "{}: assessed at {}, property taxes {}",
+        "{}: assessed at {} (source {}), property taxes {}",
         home.address,
         shown(&home.assessment_value, "(not known)"),
+        shown(&home.assessment_value_source, "none"),
         shown(&home.property_taxes, "(not known)")
     );
     let mut assessments: Vec<&Assessment> = home.assessments.iter().collect();

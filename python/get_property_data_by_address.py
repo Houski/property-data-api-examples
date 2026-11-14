@@ -70,10 +70,13 @@ answer: SearchAnswer = houski(
     query=address,
     max_results=1,
     select="property_type,bedroom,bathroom_full,interior_sq_m,construction_year,estimate_sale_price",
+    # exclude=inferred leaves out the facts Houski worked out. estimate_sale_price has no source field,
+    # so it is untouched. Remove exclude to get the inferred facts back.
+    exclude="inferred",
 )
 
 if not answer["data"]:
-    sys.exit("No property matched that address.")
+    sys.exit("No property matched that address, or Houski inferred every fact selected for it.")
 
 # A field with no value for this home is left out of the row, so print what came back.
 for field, value in answer["data"][0].items():

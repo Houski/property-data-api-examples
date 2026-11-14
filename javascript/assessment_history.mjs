@@ -37,11 +37,20 @@ if (found.data.length === 0) {
 const answer = await houski("properties", {
   property_id_eq: found.data[0].property_id,
   expand: "assessments",
-  select: "assessment_value,property_taxes",
+  // assessment_value_source says where the assessed value came from, often a link to the roll.
+  select: "assessment_value,assessment_value_source,property_taxes",
+  // exclude=inferred leaves out an assessed value or property taxes Houski worked out.
+  // Remove exclude to get the inferred values back.
+  exclude: "inferred",
 });
 
+if (answer.data.length === 0) {
+  console.error("Houski inferred both the assessed value and the property taxes of that home. Remove exclude to see them.");
+  process.exit(1);
+}
+
 const home = answer.data[0];
-console.log(`${home.address}: assessed at ${home.assessment_value ?? "(not known)"}, property taxes ${home.property_taxes ?? "(not known)"}`);
+console.log(`${home.address}: assessed at ${home.assessment_value ?? "(not known)"} (source ${home.assessment_value_source ?? "none"}), property taxes ${home.property_taxes ?? "(not known)"}`);
 const assessments = [...(home.assessments ?? [])].sort((a, b) => a.expand_assessment_year - b.expand_assessment_year);
 for (const assessment of assessments) {
   console.log(`  ${assessment.expand_assessment_year}: ${assessment.expand_assessment_value}`);

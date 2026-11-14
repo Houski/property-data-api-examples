@@ -67,10 +67,12 @@ class SearchAnswer(AnswerEnvelope):
 
 address = " ".join(sys.argv[1:]) or "100 main calgary"
 
-answer: SearchAnswer = houski("search", query=address, max_results=1, select=",".join(QUOTE_FORM_FIELDS))
+# exclude=inferred leaves out the facts Houski worked out, so a box is pre-filled only with a fact stated
+# for this home. The scores have no source field and are untouched. Remove exclude to pre-fill inferred facts too.
+answer: SearchAnswer = houski("search", query=address, max_results=1, select=",".join(QUOTE_FORM_FIELDS), exclude="inferred")
 
 if not answer["data"]:
-    sys.exit("No property matched that address.")
+    sys.exit("No property matched that address, or Houski inferred every fact selected for it.")
 
 home: QuoteFormHome = answer["data"][0]
 print(f"Address: {home['address']}")

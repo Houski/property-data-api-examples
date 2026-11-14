@@ -31,10 +31,12 @@ async function houski(endpoint, parameters = {}) {
 
 const address = process.argv.slice(2).join(" ") || "100 main calgary";
 
-const answer = await houski("search", { query: address, max_results: 1, select: QUOTE_FORM_FIELDS.join(",") });
+// exclude=inferred leaves out the facts Houski worked out, so a box is pre-filled only with a fact stated
+// for this home. The scores have no source field and are untouched. Remove exclude to pre-fill inferred facts too.
+const answer = await houski("search", { query: address, max_results: 1, select: QUOTE_FORM_FIELDS.join(","), exclude: "inferred" });
 
 if (answer.data.length === 0) {
-  console.error("No property matched that address.");
+  console.error("No property matched that address, or Houski inferred every fact selected for it.");
   process.exit(1);
 }
 

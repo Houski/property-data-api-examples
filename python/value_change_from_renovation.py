@@ -83,6 +83,8 @@ def latest_sale_price(answer: PredictAnswer):
 
 address = " ".join(sys.argv[1:]) or "100 main calgary"
 
+# exclude=inferred is left off here: /predict values the home by its bedroom count whether stated or
+# worked out, so the example needs a count for every home.
 found: SearchAnswer = houski("search", query=address, max_results=1, select="bedroom")
 if not found["data"]:
     sys.exit("No property matched that address.")

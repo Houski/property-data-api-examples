@@ -16,6 +16,8 @@ API_URL="${HOUSKI_API_URL:-https://api.houski.ca}"
 
 address="${*:-100 main calgary}"
 
+# exclude=inferred is left off here: /predict values the home by its bedroom count whether stated or
+# worked out, so the example needs a count for every home.
 found=$(curl --silent --show-error --fail-with-body --get "$API_URL/search" \
   --data-urlencode "api_key=$HOUSKI_API_KEY" \
   --data-urlencode "query=$address" \

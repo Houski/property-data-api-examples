@@ -106,6 +106,7 @@ fn main() {
             ("expand_permit_content_regex", pattern.as_str()),
             // all keeps only the properties that have a matching permit.
             ("filter_expand_match", "all"),
+            // exclude=inferred is left off here: it would drop each permit home whose construction year Houski worked out.
             ("select", "construction_year"),
             ("results_per_page", "20"),
         ],

@@ -30,10 +30,14 @@ fi
 printf '%s\n' "$found"
 
 # property_id_eq reads one property. expand attaches its assessment rows, one per year.
+# assessment_value_source says where the assessed value came from, often a link to the roll.
+# exclude=inferred leaves out an assessed value or property taxes Houski worked out.
+# Remove exclude to get the inferred values back. An empty data means Houski inferred both.
 curl --silent --show-error --fail-with-body --get "$API_URL/properties" \
   --data-urlencode "api_key=$HOUSKI_API_KEY" \
   --data-urlencode "property_id_eq=$property_id" \
   --data-urlencode "expand=assessments" \
-  --data-urlencode "select=assessment_value,property_taxes"
+  --data-urlencode "select=assessment_value,assessment_value_source,property_taxes" \
+  --data-urlencode "exclude=inferred"
 
 # Each answer can be piped through jq to read it, for example | jq .data

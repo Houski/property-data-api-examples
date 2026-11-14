@@ -17,11 +17,14 @@ QUOTE_FORM_FIELDS="property_type,construction_year,interior_sq_m,roof_material,s
 
 address="${*:-100 main calgary}"
 
+# exclude=inferred leaves out the facts Houski worked out, so a box is pre-filled only with a fact stated
+# for this home. The scores have no source field and are untouched. Remove exclude to pre-fill inferred facts too.
 curl --silent --show-error --fail-with-body --get "$API_URL/search" \
   --data-urlencode "api_key=$HOUSKI_API_KEY" \
   --data-urlencode "query=$address" \
   --data-urlencode "max_results=1" \
-  --data-urlencode "select=$QUOTE_FORM_FIELDS"
+  --data-urlencode "select=$QUOTE_FORM_FIELDS" \
+  --data-urlencode "exclude=inferred"
 
 # A field with no value for this home is left out of the row. Leave that form box
 # empty for the applicant to fill in.

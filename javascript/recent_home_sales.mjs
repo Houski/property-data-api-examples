@@ -41,6 +41,9 @@ const answer = await houski("properties", {
   // all keeps only the properties that have a matching row.
   filter_expand_match: "all",
   select: "property_type,interior_sq_m",
+  // exclude=inferred leaves out the property types and floor areas Houski worked out, and a home with
+  // neither one stated. Remove exclude to get the inferred values back.
+  exclude: "inferred",
   results_per_page: 10,
 });
 

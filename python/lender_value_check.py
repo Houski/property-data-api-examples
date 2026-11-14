@@ -48,6 +48,7 @@ class ValuedHome(TypedDict, total=False):
     property_id: str
     estimate_sale_price: float
     assessment_value: float
+    assessment_value_source: str
     property_taxes: float
 
 
@@ -79,15 +80,24 @@ class PredictAnswer(AnswerEnvelope):
 address = " ".join(sys.argv[1:]) or "100 main calgary"
 
 # Step 1: find the home and read its values. Money is in the currency of the
-# property's country and is never converted.
-found: SearchAnswer = houski("search", query=address, max_results=1, select="estimate_sale_price,assessment_value,property_taxes")
+# property's country and is never converted. assessment_value_source says where
+# the assessed value came from, often a link to the roll.
+# exclude=inferred leaves out an assessed value or property taxes Houski worked out. estimate_sale_price
+# has no source field, so it is untouched. Remove exclude to get the inferred values back.
+found: SearchAnswer = houski(
+    "search",
+    query=address,
+    max_results=1,
+    select="estimate_sale_price,assessment_value,assessment_value_source,property_taxes",
+    exclude="inferred",
+)
 
 if not found["data"]:
-    sys.exit("No property matched that address.")
+    sys.exit("No property matched that address, or Houski inferred both its assessed value and its property taxes.")
 
 home: ValuedHome = found["data"][0]
 print(f"Address: {home['address']}")
-for field in ["estimate_sale_price", "assessment_value", "property_taxes"]:
+for field in ["estimate_sale_price", "assessment_value", "assessment_value_source", "property_taxes"]:
     print(f"{field}: {home.get(field, '(not known)')}")
 
 # Step 2: the modelled sale value of that home for each of the last 24 months.

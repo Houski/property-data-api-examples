@@ -34,6 +34,8 @@ function latestSalePrice(answer) {
 
 const address = process.argv.slice(2).join(" ") || "100 main calgary";
 
+// exclude=inferred is left off here: /predict values the home by its bedroom count whether stated or
+// worked out, so the example needs a count for every home.
 const found = await houski("search", { query: address, max_results: 1, select: "bedroom" });
 if (found.data.length === 0) {
   console.error("No property matched that address.");

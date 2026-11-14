@@ -63,23 +63,32 @@ interface HomeValues {
   property_id: string;
   estimate_sale_price?: number;
   assessment_value?: number;
+  assessment_value_source?: string;
   property_taxes?: number;
 }
 
 const address = process.argv.slice(2).join(" ") || "100 main calgary";
 
 // Step 1: find the home and read its values. Money is in the currency of the
-// property's country and is never converted.
-const found = await houski<SearchAnswer<HomeValues>>("search", { query: address, max_results: 1, select: "estimate_sale_price,assessment_value,property_taxes" });
+// property's country and is never converted. assessment_value_source says where
+// the assessed value came from, often a link to the roll.
+// exclude=inferred leaves out an assessed value or property taxes Houski worked out. estimate_sale_price
+// has no source field, so it is untouched. Remove exclude to get the inferred values back.
+const found = await houski<SearchAnswer<HomeValues>>("search", {
+  query: address,
+  max_results: 1,
+  select: "estimate_sale_price,assessment_value,assessment_value_source,property_taxes",
+  exclude: "inferred",
+});
 
 if (found.data.length === 0) {
-  console.error("No property matched that address.");
+  console.error("No property matched that address, or Houski inferred both its assessed value and its property taxes.");
   process.exit(1);
 }
 
 const home = found.data[0];
 console.log(`Address: ${home.address}`);
-for (const field of ["estimate_sale_price", "assessment_value", "property_taxes"] as const) {
+for (const field of ["estimate_sale_price", "assessment_value", "assessment_value_source", "property_taxes"] as const) {
   console.log(`${field}: ${home[field] ?? "(not known)"}`);
 }
 

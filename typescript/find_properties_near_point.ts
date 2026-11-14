@@ -73,6 +73,9 @@ const answer = await houski<GeocodingAnswer<NearbyHome>>("geocoding", {
   // /geocoding takes no place parameters. Filters narrow it the same way as on /properties.
   property_type_eq: "House",
   select: "bedroom,bathroom_full,estimate_list_price",
+  // exclude=inferred leaves out the bedroom and bathroom counts Houski worked out, and a house with
+  // neither count stated. Remove exclude to get the inferred values back.
+  exclude: "inferred",
   results_per_page: 10,
 });
 

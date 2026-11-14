@@ -103,6 +103,9 @@ fn main() {
             // expand attaches each property's rental listing rows to it. Each row is billed.
             ("expand", "listings_rent"),
             ("select", "property_type,bedroom,estimate_rent_monthly"),
+            // exclude=inferred leaves out the property types and bedroom counts Houski worked out, and a home with
+            // neither one stated. Remove exclude to get the inferred values back.
+            ("exclude", "inferred"),
             ("results_per_page", "5"),
         ],
     );

@@ -18,6 +18,7 @@ since="${2:-2024-01-01}"
 # expand attaches each property's permit rows to it.
 # These two filters choose which permit rows count. (?i) ignores case.
 # all keeps only the properties that have a matching permit.
+# exclude=inferred is left off here: it would drop each permit home whose construction year Houski worked out.
 curl --silent --show-error --fail-with-body --get "$API_URL/properties" \
   --data-urlencode "api_key=$HOUSKI_API_KEY" \
   --data-urlencode "country_abbreviation=ca" \

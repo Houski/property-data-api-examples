@@ -21,6 +21,7 @@ This repository holds working examples for the Houski property data API. Use the
 - A filter is a field name, an operator suffix and a value, such as `bedroom_gte=3`. A bare `bedroom=3` is refused. The suffixes are `_eq`, `_neq`, `_in`, `_gt`, `_gte`, `_lt`, `_lte`, `_regex` and `_nregex`.
 - Text values match exactly, case included: `property_type_eq=House`. Copy text values from a response or from the field reference. Do not guess them.
 - `city` needs `country_abbreviation` and `province_abbreviation` beside it, and `community` needs all three. Take place values from `/location`. Never write a list of places into the code.
+- Houski infers a value wherever no record states one. Send `exclude=inferred` to leave the inferred values out, as the examples do whenever they select a field that has a matching `_source` field. Drop it when the task needs a value for every home. It has no effect on the `estimate_*` fields or the scores, and a request that sends it without selecting a field that has a `_source` field is refused with a 400.
 - A field with no value for a home is left out of its row. Treat a missing key as not known, and make every selected field optional in a type.
 - Fields ending in `_percent` hold a fraction from 0 to 1.
 - Money is in the currency of the property's country and is never converted.
