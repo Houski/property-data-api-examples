@@ -7,3 +7,8 @@ publish = false
 [dependencies]
 ureq = { version = "2", features = ["json"] }
 serde = { version = "1", features = ["derive"] }
+
+# Each example declares every field of an answer, so the whole shape is visible,
+# and reads only the fields it prints.
+[lints.rust]
+dead_code = "allow"

@@ -84,9 +84,9 @@ fn main() {
     let answer: PropertiesAnswer = houski(
         "properties",
         &[
-            ("country_abbreviation", "nl"),
-            ("province_abbreviation", "nho"),
-            ("city", "amsterdam"),
+            ("country_abbreviation", "us"),
+            ("province_abbreviation", "tx"),
+            ("city", "austin"),
             ("select", "interior_sq_m,interior_sq_m_source"),
             // estimates leaves out the values Houski worked out. exclude=estimates,observed
             // keeps only the values read from a linked public record.
@@ -98,7 +98,7 @@ fn main() {
     println!("Fields checked for their source: {}", answer.checked_fields.join(", "));
 
     for home in &answer.data {
-        // A home whose floor area was an estimate still comes back, with the value left out.
+        // A home whose floor area was an estimate is left out of the answer, and is not counted or billed.
         println!(
             "{}: {} square metres, source {}",
             home.address,

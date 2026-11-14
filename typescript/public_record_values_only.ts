@@ -65,9 +65,9 @@ interface PropertiesAnswer<Row> extends AnswerEnvelope {
 }
 
 const answer = await houski<PropertiesAnswer<MeasuredHome>>("properties", {
-  country_abbreviation: "nl",
-  province_abbreviation: "nho",
-  city: "amsterdam",
+  country_abbreviation: "us",
+  province_abbreviation: "tx",
+  city: "austin",
   select: "interior_sq_m,interior_sq_m_source",
   // estimates leaves out the values Houski worked out. exclude=estimates,observed
   // keeps only the values read from a linked public record.
@@ -78,7 +78,7 @@ const answer = await houski<PropertiesAnswer<MeasuredHome>>("properties", {
 console.log(`Fields checked for their source: ${(answer.checked_fields ?? []).join(", ")}`);
 
 for (const home of answer.data) {
-  // A home whose floor area was an estimate still comes back, with the value left out.
+  // A home whose floor area was an estimate is left out of the answer, and is not counted or billed.
   console.log(`${home.address}: ${home.interior_sq_m ?? "no recorded floor area"} square metres, source ${home.interior_sq_m_source ?? "none"}`);
 }
 

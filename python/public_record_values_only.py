@@ -65,9 +65,9 @@ class PropertiesAnswer(AnswerEnvelope):
 
 answer: PropertiesAnswer = houski(
     "properties",
-    country_abbreviation="nl",
-    province_abbreviation="nho",
-    city="amsterdam",
+    country_abbreviation="us",
+    province_abbreviation="tx",
+    city="austin",
     select="interior_sq_m,interior_sq_m_source",
     # estimates leaves out the values Houski worked out. exclude=estimates,observed
     # keeps only the values read from a linked public record.
@@ -78,7 +78,7 @@ answer: PropertiesAnswer = houski(
 print(f"Fields checked for their source: {', '.join(answer.get('checked_fields', []))}")
 
 for home in answer["data"]:
-    # A home whose floor area was an estimate still comes back, with the value left out.
+    # A home whose floor area was an estimate is left out of the answer, and is not counted or billed.
     print(f"{home['address']}: {home.get('interior_sq_m', 'no recorded floor area')} square metres, source {home.get('interior_sq_m_source', 'none')}")
 
 print(f"Cost: {answer['cost_cents']} cents")

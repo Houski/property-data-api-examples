@@ -16,12 +16,12 @@ API_URL="${HOUSKI_API_URL:-https://api.houski.ca}"
 
 # estimates leaves out the values Houski worked out. exclude=estimates,observed
 # keeps only the values read from a linked public record.
-# A home whose floor area was an estimate still comes back, with the value left out.
+# A home whose floor area was an estimate is left out of the answer, and is not counted or billed.
 curl --silent --show-error --fail-with-body --get "$API_URL/properties" \
   --data-urlencode "api_key=$HOUSKI_API_KEY" \
-  --data-urlencode "country_abbreviation=nl" \
-  --data-urlencode "province_abbreviation=nho" \
-  --data-urlencode "city=amsterdam" \
+  --data-urlencode "country_abbreviation=us" \
+  --data-urlencode "province_abbreviation=tx" \
+  --data-urlencode "city=austin" \
   --data-urlencode "select=interior_sq_m,interior_sq_m_source" \
   --data-urlencode "exclude=estimates" \
   --data-urlencode "results_per_page=5"
