@@ -1,10 +1,10 @@
 /*
 Return only values from public records with the Houski property data API.
 
-Houski estimates a value where no record states it, so nearly every home has
+Houski infers a value where no record states it, so nearly every home has
 one. Many fields have a matching _source field that says where the value came
-from: a link to the public record it was read from, Observed, Estimate or
-User. exclude=estimates leaves the estimated values out of the answer, and a
+from: a link to the public record it was read from, Observed, Inferred or
+User. exclude=inferred leaves the inferred values out of the answer, and a
 value that is left out is not billed.
 
 Usage: node public_record_values_only.ts
@@ -69,16 +69,16 @@ const answer = await houski<PropertiesAnswer<MeasuredHome>>("properties", {
   province_abbreviation: "tx",
   city: "austin",
   select: "interior_sq_m,interior_sq_m_source",
-  // estimates leaves out the values Houski worked out. exclude=estimates,observed
+  // inferred leaves out the values Houski worked out. exclude=inferred,observed
   // keeps only the values read from a linked public record.
-  exclude: "estimates",
+  exclude: "inferred",
   results_per_page: 5,
 });
 
 console.log(`Fields checked for their source: ${(answer.checked_fields ?? []).join(", ")}`);
 
 for (const home of answer.data) {
-  // A home whose floor area was an estimate is left out of the answer, and is not counted or billed.
+  // A home whose floor area was inferred is left out of the answer, and is not counted or billed.
   console.log(`${home.address}: ${home.interior_sq_m ?? "no recorded floor area"} square metres, source ${home.interior_sq_m_source ?? "none"}`);
 }
 
